@@ -1,0 +1,21 @@
+# Core data & analysis
+numpy
+pandas
+matplotlib
+seaborn
+scipy
+
+# Machine learning
+scikit-learn
+
+# Deep learning (NLP)
+tensorflow
+nltk
+
+# RAG system
+chromadb
+sentence-transformers
+openai
+
+# GUI (app.py)
+Pillow
