@@ -1,21 +1,34 @@
 # Core data & analysis
-numpy
-pandas
-matplotlib
-seaborn
-scipy
+numpy>=1.24.0,<2.0.0
+pandas>=2.0.0
+matplotlib>=3.7.0
+seaborn>=0.12.0
+scipy>=1.10.0
 
 # Machine learning
-scikit-learn
+scikit-learn>=1.3.0
+xgboost>=2.0.0
+joblib>=1.3.0
 
 # Deep learning (NLP)
-tensorflow
-nltk
+tensorflow>=2.13.0
+nltk>=3.8.0
 
-# RAG system
-chromadb
-sentence-transformers
-openai
+# RAG system (requires Python 3.8-3.11)
+chromadb>=0.4.0
+sentence-transformers>=2.2.0
+transformers>=4.30.0
+torch>=2.0.0
+openai>=1.0.0
 
 # GUI (app.py)
-Pillow
+Pillow>=10.0.0
+
+# Gradio demo
+gradio>=4.0.0
+
+# Environment variables
+python-dotenv>=1.0.0
+
+# Note: If using Python 3.13, some packages may not be compatible yet.
+# Recommended: Python 3.10 or 3.11 for best compatibility.
