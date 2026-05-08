@@ -1798,6 +1798,18 @@ wheels = [
 ]
 
 [[package]]
+name = "tf-keras"
+version = "2.21.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "tensorflow" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/76/80/b005b59f9ccdbabc1b6cd07ca1126cbd4d902288438f0c00072f91a43c6f/tf_keras-2.21.0.tar.gz", hash = "sha256:f9af0f2546cd5532de0fae7a481f34a1ca2253737d4cd1000f6b713dc733f770", size = 1255377, upload-time = "2026-03-18T22:12:02.103Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/c5/d2/5220e3b93444f1c57c092ab5eb2c30cdc762a6e412234750f2d6a85b3769/tf_keras-2.21.0-py3-none-any.whl", hash = "sha256:f858bf3d97f892304e7fbcf5eb0942ed91674e27204f940a85de8c93cf07fe62", size = 1694939, upload-time = "2026-03-18T22:12:00.662Z" },
+]
+
+[[package]]
 name = "threadpoolctl"
 version = "3.6.0"
 source = { registry = "https://pypi.org/simple" }
@@ -2040,6 +2052,7 @@ dependencies = [
     { name = "seaborn" },
     { name = "sentence-transformers" },
     { name = "tensorflow" },
+    { name = "tf-keras" },
     { name = "torch" },
     { name = "transformers" },
     { name = "xgboost" },
@@ -2061,6 +2074,8 @@ requires-dist = [
     { name = "seaborn", specifier = ">=0.13,<1.0" },
     { name = "sentence-transformers", specifier = ">=3.0,<4.0" },
     { name = "tensorflow", specifier = ">=2.16,<3.0" },
+    { name = "tf-keras", specifier = ">=2.16,<3.0" },
+    { name = "tf-keras", specifier = ">=2.21.0" },
     { name = "torch", specifier = ">=2.3,<3.0" },
     { name = "transformers", specifier = ">=4.40,<5.0" },
     { name = "xgboost", specifier = ">=2.1,<3.0" },

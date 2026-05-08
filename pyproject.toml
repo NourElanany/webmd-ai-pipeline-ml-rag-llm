@@ -14,38 +14,35 @@ dependencies = [
     "matplotlib>=3.9,<4.0",
     "seaborn>=0.13,<1.0",
     "scipy>=1.13,<2.0",
-
     # Machine learning
     "scikit-learn>=1.5,<2.0",
     "xgboost>=2.1,<3.0",
     "joblib>=1.4,<2.0",
-
     # Deep learning / NLP
     "tensorflow>=2.16,<3.0",
+    "tf-keras>=2.16,<3.0",
     "nltk>=3.9,<4.0",
-
     # RAG system
     "chromadb>=0.5,<1.0",
     "sentence-transformers>=3.0,<4.0",
     "transformers>=4.40,<5.0",
     "torch>=2.3,<3.0",
-
     # LLM client
     "openai>=1.30,<2.0",
-
     # GUI
     "Pillow>=10.3,<11.0",
-
     # Config
     "python-dotenv>=1.0,<2.0",
+    "tf-keras>=2.21.0",
 ]
 
 [project.scripts]
-webmd-app = "webmd.cli:run_app"
-webmd-eda = "webmd.cli:run_eda"
-webmd-ml  = "webmd.cli:run_ml"
-webmd-nlp = "webmd.cli:run_nlp"
-webmd-rag = "webmd.cli:run_rag"
+webmd-app   = "webmd.cli:run_app"
+webmd-eda   = "webmd.cli:run_eda"
+webmd-ml    = "webmd.cli:run_ml"
+webmd-nlp   = "webmd.cli:run_nlp"
+webmd-rag   = "webmd.cli:run_rag"
+webmd-setup = "webmd.cli:run_setup"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/webmd"]

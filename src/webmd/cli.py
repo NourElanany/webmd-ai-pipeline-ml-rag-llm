@@ -85,6 +85,7 @@ def run_rag() -> None:
     """Phase 4+5 — RAG+LLM: build ChromaDB index, launch RAG GUI."""
     import os
     os.environ["TOKENIZERS_PARALLELISM"] = "false"
+    os.environ["USE_TF"] = "0"   # force sentence-transformers to use PyTorch only
 
     from sentence_transformers import SentenceTransformer  # heavy import
 
@@ -111,3 +112,79 @@ def run_app() -> None:
     """Launch the unified Tkinter dashboard (all phases)."""
     from webmd.gui.app import main
     main()
+
+
+def run_setup() -> None:
+    """Preflight: run all training phases in order, then launch the dashboard.
+
+    Equivalent to running these commands sequentially:
+        uv run webmd-eda
+        uv run webmd-ml
+        uv run webmd-nlp
+        uv run webmd-rag   (index build only — no GUI)
+        uv run webmd-app
+
+    Skips any phase whose output artifacts already exist on disk so re-running
+    is safe and fast after a partial run.
+    """
+    import os
+    from webmd.config import (
+        CLEANED_CSV, ML_MODEL_PATH,
+        TFIDF_SVC_PATH, LSTM_MODEL_PATH, CHROMA_DIR, COLLECTION_NAME,
+    )
+
+    # ── Phase 1 — EDA ────────────────────────────────────────
+    if CLEANED_CSV.exists():
+        print(f"[skip] Phase 1 — cleaned CSV already exists: {CLEANED_CSV}")
+    else:
+        print("\n" + "=" * 60)
+        print("PHASE 1 — EDA")
+        print("=" * 60)
+        run_eda()
+
+    # ── Phase 2 — ML ─────────────────────────────────────────
+    if ML_MODEL_PATH.exists():
+        print(f"[skip] Phase 2 — ML model already exists: {ML_MODEL_PATH}")
+    else:
+        print("\n" + "=" * 60)
+        print("PHASE 2 — MACHINE LEARNING")
+        print("=" * 60)
+        run_ml()
+
+    # ── Phase 3 — NLP ────────────────────────────────────────
+    if TFIDF_SVC_PATH.exists() and LSTM_MODEL_PATH.exists():
+        print(f"[skip] Phase 3 — NLP artifacts already exist in artifacts/")
+    else:
+        print("\n" + "=" * 60)
+        print("PHASE 3 — NLP / DEEP LEARNING")
+        print("=" * 60)
+        run_nlp()
+
+    # ── Phase 4+5 — RAG index (no GUI) ───────────────────────
+    _chroma_ready = False
+    try:
+        import chromadb
+        client   = chromadb.PersistentClient(path=str(CHROMA_DIR))
+        existing = [c.name for c in client.list_collections()]
+        if COLLECTION_NAME in existing and client.get_collection(COLLECTION_NAME).count() > 0:
+            _chroma_ready = True
+    except Exception:
+        pass
+
+    if _chroma_ready:
+        print(f"[skip] Phase 4+5 — ChromaDB index already exists in {CHROMA_DIR}/")
+    else:
+        print("\n" + "=" * 60)
+        print("PHASE 4+5 — RAG INDEX BUILD")
+        print("=" * 60)
+        os.environ["TOKENIZERS_PARALLELISM"] = "false"
+        os.environ["USE_TF"] = "0"   # force sentence-transformers to use PyTorch only
+        from webmd.rag.indexer import build_index, load_rag_data
+        df  = load_rag_data()
+        build_index(df)
+
+    # ── Launch dashboard ─────────────────────────────────────
+    print("\n" + "=" * 60)
+    print("ALL PHASES COMPLETE — launching dashboard")
+    print("=" * 60 + "\n")
+    run_app()

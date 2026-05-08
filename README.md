@@ -34,6 +34,7 @@ An end-to-end AI pipeline built on the [WebMD Drug Reviews](https://www.kaggle.c
 | 3 — NLP | `uv run webmd-nlp` | Train TF-IDF + BiLSTM ensemble → save 6 artifacts + 6 plots |
 | 4+5 — RAG | `uv run webmd-rag` | Build ChromaDB index → launch standalone RAG + LLM GUI |
 | Dashboard | `uv run webmd-app` | Unified window — all tabs, loads pre-trained artifacts |
+| **All-in-one** | **`uv run webmd-setup`** | **Run all phases in order, skip existing, then launch dashboard** |
 
 Phases must be run in order (1 → 2 → 3 → 4+5) before the dashboard works. The dashboard never retrains — it only loads from `artifacts/`.
 
@@ -211,6 +212,30 @@ uv run webmd-app
 ```
 
 Opens the full desktop dashboard with five tabs: Overview, EDA, ML, NLP/DL, and RAG + LLM.
+
+---
+
+### One-command setup (recommended for first run)
+
+```bash
+uv run webmd-setup
+```
+
+Runs all phases in order, then launches the dashboard automatically. Safe to re-run — any phase whose output already exists on disk is skipped:
+
+```
+[skip] Phase 1 — cleaned CSV already exists
+[skip] Phase 2 — ML model already exists
+==============================
+PHASE 3 — NLP / DEEP LEARNING
+==============================
+...
+==============================
+ALL PHASES COMPLETE — launching dashboard
+==============================
+```
+
+This is the recommended command for a first-time setup or after cloning on a new machine.
 
 ---
 
@@ -456,6 +481,18 @@ Make sure `data/src/webmd.csv` exists. Download from Kaggle.
 **`webmd-app` tab shows "Artifact not found"**
 Run the phases in order first: `webmd-eda` → `webmd-ml` → `webmd-nlp` → `webmd-rag`
 
+**`webmd-setup` / `webmd-rag` fails with SSL certificate error on HuggingFace download**
+The `all-MiniLM-L6-v2` model is downloaded from HuggingFace on first use. On machines with corporate certificates, set the CA bundle before running:
+```bash
+# Windows PowerShell
+$env:REQUESTS_CA_BUNDLE = "C:\path\to\your\ca-bundle.crt"
+uv run webmd-setup
+
+# Or disable SSL verification (not recommended for production)
+$env:CURL_CA_BUNDLE = ""
+```
+Alternatively, pre-download the model manually and set `SENTENCE_TRANSFORMERS_HOME` to point to the local cache.
+
 **BiLSTM training is slow**
 Expected on CPU (~15–20 min). EarlyStopping will cut it short if val_loss stops improving. A CUDA GPU reduces this to ~3–5 min.
 
@@ -464,6 +501,9 @@ Only on first run. The index is persisted to `chroma_db/` and loaded instantly o
 
 **TensorFlow warnings on startup**
 Set `TF_CPP_MIN_LOG_LEVEL=3` in your environment to suppress them. The CLI entry points set this automatically.
+
+**ChromaDB telemetry warning: `capture() takes 1 positional argument`**
+Harmless internal bug in chromadb 0.6.x. Does not affect functionality.
 
 ---
 
