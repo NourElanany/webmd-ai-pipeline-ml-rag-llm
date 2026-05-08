@@ -83,8 +83,28 @@ def run_nlp() -> None:
 
 def run_rag() -> None:
     """Phase 4+5 — RAG+LLM: build ChromaDB index, launch RAG GUI."""
-    # Populated in Phase 5
-    raise NotImplementedError("Phase 4+5 not yet implemented — run after Phase 5 of refactor")
+    import os
+    os.environ["TOKENIZERS_PARALLELISM"] = "false"
+
+    from sentence_transformers import SentenceTransformer  # heavy import
+
+    from webmd.config import EMBED_MODEL, LLM_MODEL, OPENROUTER_API_KEY
+    from webmd.rag.indexer import build_index, load_rag_data
+    from webmd.rag.llm import build_client
+
+    df         = load_rag_data()
+    col        = build_index(df)
+    embedder   = SentenceTransformer(EMBED_MODEL)
+    llm_client = build_client(OPENROUTER_API_KEY)
+
+    if llm_client:
+        print(f"LLM ready: {LLM_MODEL}")
+    else:
+        print("No OPENROUTER_API_KEY found — running without LLM (template mode)")
+
+    # GUI is imported here so heavy GUI deps don't load at CLI startup
+    from webmd.gui.tabs.rag import launch_rag_window
+    launch_rag_window(col, embedder, llm_client)
 
 
 def run_app() -> None:

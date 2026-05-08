@@ -79,7 +79,7 @@ def build_models() -> dict[str, Any]:
         "Logistic Regression": Pipeline([
             ("scaler", StandardScaler()),
             ("clf", LogisticRegression(
-                max_iter=500, random_state=ML_RANDOM_STATE, n_jobs=-1
+                max_iter=500, random_state=ML_RANDOM_STATE,
             )),
         ]),
         "XGBoost": XGBClassifier(
@@ -128,7 +128,10 @@ def train_all(
             accuracy=acc,
             f1=f1,
             val_f1=val_f1,
-            report=classification_report(splits.y_test, y_pred_test, output_dict=True),
+            report=classification_report(
+                splits.y_test, y_pred_test,
+                output_dict=True, zero_division=0,
+            ),
             cm=confusion_matrix(splits.y_test, y_pred_test),
         )
         print(
