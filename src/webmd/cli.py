@@ -109,5 +109,5 @@ def run_rag() -> None:
 
 def run_app() -> None:
     """Launch the unified Tkinter dashboard (all phases)."""
-    # Populated in Phase 6
-    raise NotImplementedError("GUI not yet implemented — run after Phase 6 of refactor")
+    from webmd.gui.app import main
+    main()
