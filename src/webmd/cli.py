@@ -27,14 +27,58 @@ def run_eda() -> None:
 
 def run_ml() -> None:
     """Phase 2 — ML: train effectiveness models, save best, generate 5 plots."""
-    # Populated in Phase 3
-    raise NotImplementedError("Phase 2 not yet implemented — run after Phase 3 of refactor")
+    from webmd.config import CLEANED_CSV, ML_MODEL_PATH, ML_PLOTS_DIR
+    from webmd.data.loader import load_cleaned
+    from webmd.ml.features import build_features
+    from webmd.ml.train import build_models, split_data, train_all, select_best, save_model
+    from webmd.ml.plots import generate_ml_plots
+
+    df      = load_cleaned(CLEANED_CSV)
+    X, y, _ = build_features(df)
+    splits  = split_data(X, y)
+    results = train_all(build_models(), splits)
+    best    = select_best(results)
+    save_model(results[best].model, ML_MODEL_PATH)
+    generate_ml_plots(results, best, splits, ML_PLOTS_DIR)
 
 
 def run_nlp() -> None:
     """Phase 3 — NLP/DL: train TF-IDF + BiLSTM ensemble, save all artifacts, generate 6 plots."""
-    # Populated in Phase 4
-    raise NotImplementedError("Phase 3 not yet implemented — run after Phase 4 of refactor")
+    import os
+    os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
+    os.environ["TF_CPP_MIN_LOG_LEVEL"]  = "3"
+
+    from webmd.config import ARTIFACTS_DIR, CLEANED_CSV, NLP_PLOTS_DIR
+    from webmd.nlp.ensemble import evaluate_ensemble
+    from webmd.nlp.lstm import build_lstm_model, evaluate_lstm, save_lstm, train_lstm
+    from webmd.nlp.plots import generate_nlp_plots
+    from webmd.nlp.preprocess import load_nlp_data, prepare_data
+    from webmd.nlp.tfidf import build_tfidf_model, evaluate_tfidf, save_tfidf
+
+    df     = load_nlp_data(CLEANED_CSV)
+    splits = prepare_data(df)
+
+    # Train TF-IDF ensemble
+    tfidf_artifacts = build_tfidf_model(
+        splits.X_txt_train, splits.y_train,
+        splits.X_txt_val,   splits.y_val,
+    )
+    save_tfidf(tfidf_artifacts, ARTIFACTS_DIR)
+    tfidf_result = evaluate_tfidf(tfidf_artifacts, splits.X_txt_test, splits.y_test)
+
+    # Train BiLSTM
+    lstm_model, history = train_lstm(
+        build_lstm_model(),
+        splits.X_seq_train, splits.X_seq_val,
+        splits.y_train,     splits.y_val,
+    )
+    save_lstm(lstm_model, splits.tokenizer)
+    lstm_result = evaluate_lstm(lstm_model, splits.X_seq_test, splits.y_test)
+
+    # Weighted ensemble evaluation
+    ensemble_result = evaluate_ensemble(lstm_result.y_prob, tfidf_result.y_prob, splits.y_test)
+
+    generate_nlp_plots(history, lstm_result, tfidf_result, ensemble_result, df, NLP_PLOTS_DIR)
 
 
 def run_rag() -> None:
