@@ -1,34 +1,46 @@
-# Core data & analysis
-numpy>=1.24.0,<2.0.0
-pandas>=2.0.0
-matplotlib>=3.7.0
-seaborn>=0.12.0
-scipy>=1.10.0
+# ============================================================
+# requirements.txt — Direct dependencies with exact versions
+#
+# This file is for reference and pip-based installs.
+# The canonical dependency specification is pyproject.toml.
+# For a fully reproducible install use uv:
+#
+#   uv sync --native-tls
+#
+# For a plain pip install:
+#
+#   pip install -r requirements.txt
+# ============================================================
 
-# Machine learning
-scikit-learn>=1.3.0
-xgboost>=2.0.0
-joblib>=1.3.0
+# Python 3.11 required (3.12+ not supported by tensorflow 2.x)
 
-# Deep learning (NLP)
-tensorflow>=2.13.0
-nltk>=3.8.0
+# ── Core data & analysis ─────────────────────────────────────
+numpy==1.26.4
+pandas==2.3.3
+matplotlib==3.10.9
+seaborn==0.13.2
+scipy==1.17.1
 
-# RAG system (requires Python 3.8-3.11)
-chromadb>=0.4.0
-sentence-transformers>=2.2.0
-transformers>=4.30.0
-torch>=2.0.0
-openai>=1.0.0
+# ── Machine learning ─────────────────────────────────────────
+scikit-learn==1.8.0
+xgboost==2.1.4
+joblib==1.5.3
 
-# GUI (app.py)
-Pillow>=10.0.0
+# ── Deep learning / NLP ──────────────────────────────────────
+tensorflow==2.21.0
+nltk==3.9.4
 
-# Gradio demo
-gradio>=4.0.0
+# ── RAG & embeddings ─────────────────────────────────────────
+chromadb==0.6.3
+sentence-transformers==3.4.1
+transformers==4.57.6
+torch==2.11.0
 
-# Environment variables
-python-dotenv>=1.0.0
+# ── LLM client ───────────────────────────────────────────────
+openai==1.109.1
 
-# Note: If using Python 3.13, some packages may not be compatible yet.
-# Recommended: Python 3.10 or 3.11 for best compatibility.
+# ── GUI ──────────────────────────────────────────────────────
+Pillow==10.4.0
+
+# ── Config ───────────────────────────────────────────────────
+python-dotenv==1.2.2
