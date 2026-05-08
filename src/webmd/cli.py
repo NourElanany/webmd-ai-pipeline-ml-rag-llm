@@ -14,8 +14,15 @@ from __future__ import annotations
 
 def run_eda() -> None:
     """Phase 1 — EDA: clean raw data, save cleaned CSV, generate 8 plots."""
-    # Populated in Phase 2
-    raise NotImplementedError("Phase 1 not yet implemented — run after Phase 2 of refactor")
+    from webmd.config import RAW_CSV, CLEANED_CSV, EDA_PLOTS_DIR
+    from webmd.data.loader import load_raw
+    from webmd.data.cleaner import clean_data, save_cleaned
+    from webmd.analysis.plots import generate_eda_plots
+
+    df = load_raw(RAW_CSV)
+    df, _report = clean_data(df)
+    save_cleaned(df, CLEANED_CSV)
+    generate_eda_plots(df, EDA_PLOTS_DIR)
 
 
 def run_ml() -> None:
